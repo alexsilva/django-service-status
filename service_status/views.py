@@ -4,12 +4,14 @@ from __future__ import absolute_import, print_function, unicode_literals
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.generic.base import TemplateView
+from django.conf import settings
 
 from .checks import do_check
 
 
 class ServiceStatusView(TemplateView):
-    template_name = 'service_status/service_status.html'
+    template_name = getattr(settings, "SERVICE_STATUS_VIEW_TEMPLATE",
+                            'service_status/service_status.html')
     response_status_code = 200
 
     @method_decorator(never_cache)
