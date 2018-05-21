@@ -167,13 +167,13 @@ def do_check():
     errors = []
     warnings = []
 
-    for check_name, check_fqn in conf.CHECKS:
+    for name, params in conf.CHECKS:
         try:
-            check_class = import_string(check_fqn)
-            check_init_kwargs = {'name': check_name}
-            check_setting_name = 'INIT_{}'.format(check_name)
-            if hasattr(conf, check_setting_name):
-                check_init_kwargs.update(getattr(conf, check_setting_name))
+            check_init_kwargs = {'name': name}
+            check_init_kwargs.update(params.get('kwargs', {}))
+
+            check_class = import_string(params['fqn'])
+
             check = check_class(**check_init_kwargs)
             checks.append(check)
             check.run()

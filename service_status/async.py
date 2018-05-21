@@ -16,13 +16,11 @@ def do_check():
             self.check = check
             self.task = task
 
-    for check_name, check_fqn in conf.CHECKS:
-        check_class = import_string(check_fqn)
-        check_init_kwargs = {'name': check_name}
-        check_setting_name = 'INIT_{}'.format(check_name)
+    for name, params in conf.CHECKS:
+        check_init_kwargs = {'name': name}
+        check_init_kwargs.update(params.get('kwargs', {}))
 
-        if hasattr(conf, check_setting_name):
-            check_init_kwargs.update(getattr(conf, check_setting_name))
+        check_class = import_string(params['fqn'])
 
         check = check_class(**check_init_kwargs)
 

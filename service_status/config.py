@@ -5,18 +5,16 @@ from .utils import AppSettings
 
 
 class ApplicationSettings(AppSettings):
-    defaults = {
-        'CHECKS': (
-            ('DB_DEFAULT', 'service_status.checks.DatabaseCheck'),
-            ('SWAP', 'service_status.checks.SwapCheck'),
-        ),
-        'INIT_DB_DEFAULT': {
-            'model_name': 'sessions.Session',
-        },
-        'INIT_SWAP': {
-            'limit': 0,
-        },
-    }
+    defaults = [
+        ('DB_DEFAULT', {
+            'fqn': 'service_status.checks.DatabaseCheck',
+            'kwargs': {'model_name': 'sessions.Session'}
+        }),
+        ('SWAP', {
+            'fqn': 'service_status.checks.SwapCheck',
+            'kwargs': {'limit': 0}
+        })
+    ]
 
 
 conf = ApplicationSettings('SERVICE_STATUS')

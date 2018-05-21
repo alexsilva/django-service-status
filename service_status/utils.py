@@ -53,15 +53,17 @@ class CeleryWorker(object):
 class AppSettings(object):
     defaults = {}
 
-    def __init__(self, prefix):
+    def __init__(self, prefix, settings=None):
         self.prefix = prefix
-        from django.conf import settings
+
+        if settings is None:
+            from django.conf import settings
 
         self.django_settings = settings
 
-        for name, default in six.iteritems(self.defaults):
+        for name, params in self.defaults:
             prefix_name = (self.prefix + '_' + name).upper()
-            value = getattr(self.django_settings, prefix_name, default)
+            value = getattr(self.django_settings, prefix_name, params.get('kwargs', {}))
             self._set_attr(prefix_name, value)
 
         setting_changed.connect(self._handler)
