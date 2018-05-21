@@ -25,6 +25,7 @@ class SystemCheckBase(object):
 
     def __init__(self, name, **kwargs):
         self.name = name
+        self.kwargs = kwargs
 
     def __str__(self):
         return '{} {}: {} ({:.3f}s)'.format(self.__class__.__name__, self.name, self.output, self.elapsed)
