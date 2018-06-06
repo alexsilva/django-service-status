@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, unicode_literals
 
-import logging
 from collections import namedtuple
-
 from django.apps import apps
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.module_loading import import_string
@@ -11,8 +9,6 @@ from django.utils.module_loading import import_string
 from service_status.utils import get_user_swap, GetTime
 from .config import conf
 from .exceptions import SystemStatusError, SystemStatusWarning
-
-sentry = logging.getLogger('sentry')
 
 
 @python_2_unicode_compatible
@@ -40,19 +36,14 @@ class SystemCheckBase(object):
         except SystemStatusWarning as e:
             self.warning = e
             self.output = str(e)
-            log_message = getattr(e, 'log_message', str(e))
-            sentry.warning(log_message)
             raise
         except SystemStatusError as e:
             self.error = e
             self.output = str(e)
-            log_message = getattr(e, 'log_message', str(e))
-            sentry.error(log_message)
             raise
         except Exception as e:
             self.error = SystemStatusError(repr(e))
             self.output = str(e)
-            sentry.exception(e)
             raise self.error
 
     @property
