@@ -19,16 +19,29 @@ class IterInstanceCheck(object):
     def __init__(self, opts):
         self.opts = opts
 
+    @staticmethod
+    def _get_obj(name, params):
+        check_init_kwargs = {'name': name}
+        check_init_kwargs.update(params.get('kwargs', {}))
+
+        check_class = import_string(params['fqn'])
+
+        return check_class(**check_init_kwargs)
+
     def __iter__(self):
-        for name, params in self.opts:
-            check_init_kwargs = {'name': name}
-            check_init_kwargs.update(params.get('kwargs', {}))
-
-            check_class = import_string(params['fqn'])
-
-            check = check_class(**check_init_kwargs)
-            yield check
-        raise StopIteration
+        try:
+            for name, params in self.opts:
+                yield self._get_obj(name, params)
+            raise StopIteration
+        except ValueError:  # is a opts of files
+            for defs in self.opts:
+                try:
+                    opts = import_string(defs)
+                    for name, params in opts:
+                        yield self._get_obj(name, params)
+                except ImportError:
+                    continue
+            raise StopIteration
 
 
 class CeleryWorker(object):

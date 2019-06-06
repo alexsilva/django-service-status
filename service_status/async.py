@@ -18,7 +18,9 @@ def do_check():
 
     for check in IterInstanceCheck(conf.CHECKS):
         yield StatusInfo(check, service_status_run.delay(check))
-
+    # opts of files
+    for check in IterInstanceCheck(conf.CHECK_FILES):
+        yield StatusInfo(check, service_status_run.delay(check))
     raise StopIteration
 
 

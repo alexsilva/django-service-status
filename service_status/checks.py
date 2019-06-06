@@ -162,13 +162,16 @@ def do_check():
     errors = []
     warnings = []
 
-    for check in IterInstanceCheck(conf.CHECKS):
-        try:
-            checks.append(check)
-            check.run()
-        except SystemStatusError as e:
-            errors.append(e)
-        except SystemStatusWarning as e:
-            warnings.append(e)
+    def run_check(opts):
+        for check in IterInstanceCheck(opts):
+            try:
+                checks.append(check)
+                check.run()
+            except SystemStatusError as e:
+                errors.append(e)
+            except SystemStatusWarning as e:
+                warnings.append(e)
 
+    run_check(conf.CHECKS)
+    run_check(conf.CHECK_FILES)
     return namedtuple('SystemErrors', ('checks', 'errors', 'warnings'))(checks, errors, warnings)
