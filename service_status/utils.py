@@ -8,6 +8,7 @@ from StringIO import StringIO
 from time import time
 
 import psutil
+import six
 from django.core.management import call_command
 from django.core.signals import setting_changed
 from django.utils.module_loading import import_string
@@ -78,9 +79,9 @@ class AppSettings(object):
 
         self.django_settings = settings
 
-        for name, params in self.defaults:
+        for name, default in six.iteritems(self.defaults):
             prefix_name = (self.prefix + '_' + name).upper()
-            value = getattr(self.django_settings, prefix_name, params.get('kwargs', {}))
+            value = getattr(self.django_settings, prefix_name, default)
             self._set_attr(prefix_name, value)
 
         setting_changed.connect(self._handler)
