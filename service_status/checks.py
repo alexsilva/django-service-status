@@ -2,11 +2,12 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from collections import namedtuple
+
 from django.apps import apps
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.module_loading import import_string
 
-from service_status.utils import get_user_swap, GetTime
+from service_status.utils import get_user_swap, GetTime, IterInstanceCheck
 from .config import conf
 from .exceptions import SystemStatusError, SystemStatusWarning
 
@@ -161,14 +162,8 @@ def do_check():
     errors = []
     warnings = []
 
-    for name, params in conf.CHECKS:
+    for check in IterInstanceCheck(conf.CHECKS):
         try:
-            check_init_kwargs = {'name': name}
-            check_init_kwargs.update(params.get('kwargs', {}))
-
-            check_class = import_string(params['fqn'])
-
-            check = check_class(**check_init_kwargs)
             checks.append(check)
             check.run()
         except SystemStatusError as e:

@@ -3,14 +3,31 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import inspect
 import os
+import re
 from StringIO import StringIO
+from time import time
 
 import psutil
-import re
-import six
 from django.core.management import call_command
 from django.core.signals import setting_changed
-from time import time
+from django.utils.module_loading import import_string
+
+
+class IterInstanceCheck(object):
+    """import check class"""
+    def __init__(self, opts):
+        self.opts = opts
+
+    def __iter__(self):
+        for name, params in self.opts:
+            check_init_kwargs = {'name': name}
+            check_init_kwargs.update(params.get('kwargs', {}))
+
+            check_class = import_string(params['fqn'])
+
+            check = check_class(**check_init_kwargs)
+            yield check
+        raise StopIteration
 
 
 class CeleryWorker(object):

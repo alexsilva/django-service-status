@@ -1,10 +1,10 @@
 # coding=utf-8
+from celery import current_app
 from celery.result import AsyncResult
-from django.utils.module_loading import import_string
 
 from service_status.config import conf
 from service_status.tasks import service_status_run
-from celery import current_app
+from service_status.utils import IterInstanceCheck
 
 
 def do_check():
@@ -16,14 +16,7 @@ def do_check():
             self.check = check
             self.task = task
 
-    for name, params in conf.CHECKS:
-        check_init_kwargs = {'name': name}
-        check_init_kwargs.update(params.get('kwargs', {}))
-
-        check_class = import_string(params['fqn'])
-
-        check = check_class(**check_init_kwargs)
-
+    for check in IterInstanceCheck(conf.CHECKS):
         yield StatusInfo(check, service_status_run.delay(check))
 
     raise StopIteration
