@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import inspect
 import os
 import re
-from StringIO import StringIO
+from io import StringIO
 from time import time
 
 import psutil
