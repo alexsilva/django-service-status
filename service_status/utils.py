@@ -32,7 +32,6 @@ class IterInstanceCheck(object):
         try:
             for name, params in self.opts:
                 yield self._get_obj(name, params)
-            raise StopIteration
         except ValueError:  # is a opts of files
             for defs in self.opts:
                 try:
@@ -41,7 +40,6 @@ class IterInstanceCheck(object):
                         yield self._get_obj(name, params)
                 except ImportError:
                     continue
-            raise StopIteration
 
 
 class CeleryWorker(object):
