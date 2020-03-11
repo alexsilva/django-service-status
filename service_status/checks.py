@@ -28,7 +28,7 @@ class SystemCheckBase(object):
         return object.__getattribute__(self, "kwargs")[item]
 
     def __str__(self):
-        return '{} {}: {} ({:.3f}s)'.format(self.__class__.__name__, self.name, self.output, self.elapsed)
+        return f'{self.__class__.__name__} {self.name}: {self.output} ({self.elapsed:.3f}s)'
 
     def _run(self):
         raise NotImplementedError()  # pragma: no cover
@@ -86,8 +86,7 @@ class DatabaseCheck(SystemCheckBase):
 
         count = queryset.count()
 
-        tpl = '{model} (db: {db}) {result} OK'
-        return tpl.format(model=self.model_name, db=queryset.db, result=count)
+        return f'{self.model_name} (db: {queryset.db}) {count} OK'
 
 
 # class SupervisorCheck(SystemCheckBase):
@@ -126,11 +125,10 @@ class SwapCheck(SystemCheckBase):
 
     def _run(self):
         swap = get_user_swap()
-        message = 'the user swap memory is: {swap:.0f} KB (limit: {limit:.0f} KB)'.format(swap=swap / 1024,
-                                                                                          limit=self.limit / 1024)
+        message = f'the user swap memory is: {swap / 1024:.0f} KB (limit: {self.limit / 1024:.0f} KB)'
         if swap > self.limit:
             e = SystemStatusWarning(message)
-            e.log_message = 'the user swap memory is above {swap:.0f} KB'.format(swap=self.limit / 1024)
+            e.log_message = f'the user swap memory is above {self.limit / 1024:.0f} KB'
             raise e
         return message
 
@@ -149,12 +147,12 @@ class CeleryCheck(SystemCheckBase):
             response = celery_app.control.ping([name])
 
             if not response:
-                raise SystemStatusError('celery worker `{}` was not found'.format(name))
+                raise SystemStatusError(f'celery worker `{name}` was not found')
 
             if response[0][name] != {'ok': 'pong'}:
-                raise SystemStatusError('celery worker `{}` did not respond'.format(name))
+                raise SystemStatusError(f'celery worker `{name}` did not respond')
 
-        return 'got response from {workers} worker(s)'.format(workers=len(self.worker_names))
+        return f'got response from {len(self.worker_names)} worker(s)'
 
 
 def do_check():
