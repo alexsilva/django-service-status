@@ -24,8 +24,12 @@ class SystemCheckBase(object):
         self.name = name
         self.kwargs = kwargs
 
-    def __getattr__(self, item):
-        return object.__getattribute__(self, "kwargs")[item]
+    def __getattr__(self, name):
+        method = object.__getattribute__
+        try:
+            return method(self, "kwargs")[name]
+        except KeyError:
+            return method(self, name)
 
     def __str__(self):
         return f'{self.__class__.__name__} {self.name}: {self.output} ({self.elapsed:.3f}s)'
