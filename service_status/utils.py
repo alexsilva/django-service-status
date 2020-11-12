@@ -16,8 +16,8 @@ from django.utils.module_loading import import_string
 
 class InstanceCheck(object):
     """import check class"""
-    def __init__(self, opts):
-        self.opts = opts
+    def __init__(self, options):
+        self.options = options
 
     @staticmethod
     def _create(name, params):
@@ -30,10 +30,10 @@ class InstanceCheck(object):
 
     def __iter__(self):
         try:
-            for name, params in self.opts:
+            for name, params in self.options:
                 yield self._create(name, params)
         except ValueError:  # is a opts of files
-            for defs in self.opts:
+            for defs in self.options:
                 try:
                     opts = import_string(defs)
                     for name, params in opts:
