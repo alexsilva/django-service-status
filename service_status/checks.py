@@ -7,7 +7,7 @@ from django.apps import apps
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.module_loading import import_string
 
-from service_status.utils import get_user_swap, GetTime, IterInstanceCheck
+from service_status.utils import get_user_swap, GetTime, InstanceCheck
 from .config import conf
 from .exceptions import SystemStatusError, SystemStatusWarning
 
@@ -165,7 +165,7 @@ def do_check():
     warnings = []
 
     def run_check(opts):
-        for check in IterInstanceCheck(opts):
+        for check in InstanceCheck(opts):
             try:
                 checks.append(check)
                 check.run()

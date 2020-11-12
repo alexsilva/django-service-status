@@ -4,7 +4,7 @@ from celery.result import AsyncResult
 
 from service_status.config import conf
 from service_status.tasks import service_status_run
-from service_status.utils import IterInstanceCheck
+from service_status.utils import InstanceCheck
 
 
 def do_check():
@@ -16,10 +16,10 @@ def do_check():
             self.check = check
             self.task = task
 
-    for check in IterInstanceCheck(conf.CHECKS):
+    for check in InstanceCheck(conf.CHECKS):
         yield StatusInfo(check, service_status_run.delay(check))
     # opts of files
-    for check in IterInstanceCheck(conf.CHECK_FILES):
+    for check in InstanceCheck(conf.CHECK_FILES):
         yield StatusInfo(check, service_status_run.delay(check))
 
 

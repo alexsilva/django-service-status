@@ -14,7 +14,7 @@ from django.core.signals import setting_changed
 from django.utils.module_loading import import_string
 
 
-class IterInstanceCheck(object):
+class InstanceCheck(object):
     """import check class"""
     def __init__(self, opts):
         self.opts = opts
