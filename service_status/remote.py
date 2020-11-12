@@ -21,7 +21,6 @@ def do_check():
     # opts of files
     for check in IterInstanceCheck(conf.CHECK_FILES):
         yield StatusInfo(check, service_status_run.delay(check))
-    raise StopIteration
 
 
 def is_ready(task_id):
