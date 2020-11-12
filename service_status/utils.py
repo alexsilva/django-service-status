@@ -20,7 +20,7 @@ class InstanceCheck(object):
         self.opts = opts
 
     @staticmethod
-    def _get_obj(name, params):
+    def _create(name, params):
         check_init_kwargs = {'name': name}
         check_init_kwargs.update(params.get('kwargs', {}))
 
@@ -31,13 +31,13 @@ class InstanceCheck(object):
     def __iter__(self):
         try:
             for name, params in self.opts:
-                yield self._get_obj(name, params)
+                yield self._create(name, params)
         except ValueError:  # is a opts of files
             for defs in self.opts:
                 try:
                     opts = import_string(defs)
                     for name, params in opts:
-                        yield self._get_obj(name, params)
+                        yield self._create(name, params)
                 except ImportError:
                     continue
 
