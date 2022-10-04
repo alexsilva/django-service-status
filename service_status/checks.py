@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, unicode_literals
-
+# coding=utf-8
 from collections import namedtuple
 
 from django.apps import apps
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.module_loading import import_string
 
 from service_status.utils import get_user_swap, GetTime, InstanceCheck
@@ -12,8 +9,7 @@ from .config import conf
 from .exceptions import SystemStatusError, SystemStatusWarning
 
 
-@python_2_unicode_compatible
-class SystemCheckBase(object):
+class SystemCheckBase:
     name = None
     output = None
     error = None
@@ -32,7 +28,7 @@ class SystemCheckBase(object):
             return method(self, name)
 
     def __str__(self):
-        return f'{self.__class__.__name__} {self.name}: {self.output} ({self.elapsed:.3f}s)'
+        return f'{type(self).__name__} {self.name}: {self.output} ({self.elapsed:.3f}s)'
 
     def _run(self):
         raise NotImplementedError()  # pragma: no cover

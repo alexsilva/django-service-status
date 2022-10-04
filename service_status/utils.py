@@ -30,7 +30,7 @@ class InstanceCheck(object):
         try:
             for name, params in self.options:
                 yield self._create(name, params)
-        except ValueError:  # is a opts of files
+        except ValueError:  # is an opts of files
             for defs in self.options:
                 try:
                     opts = import_string(defs)
